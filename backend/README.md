@@ -11,7 +11,7 @@ Built with **Express.js**, **MongoDB**, and modern backend best practices includ
 ## ✨ Features
 
 - **Version Management**: Track and manage multiple versions of your API
-- **Security**: 
+- **Security**:
   - Helmet.js for secure HTTP headers
   - CORS protection
   - Rate limiting (100 requests per 10 minutes per IP)
@@ -43,18 +43,18 @@ backend/
 
 ## 🛠️ Tech Stack
 
-| Category | Technology |
-|----------|-----------|
-| **Runtime** | Node.js |
-| **Framework** | Express.js 5.x |
-| **Database** | MongoDB with Mongoose 9.x |
-| **Validation** | Joi |
-| **Security** | Helmet, CORS, Rate Limiting |
-| **Logging** | Morgan |
-| **Testing** | Jest, Supertest |
-| **Code Quality** | ESLint, Prettier |
-| **Documentation** | Swagger/OpenAPI |
-| **Environment** | Dotenv |
+| Category          | Technology                  |
+| ----------------- | --------------------------- |
+| **Runtime**       | Node.js                     |
+| **Framework**     | Express.js 5.x              |
+| **Database**      | MongoDB with Mongoose 9.x   |
+| **Validation**    | Joi                         |
+| **Security**      | Helmet, CORS, Rate Limiting |
+| **Logging**       | Morgan                      |
+| **Testing**       | Jest, Supertest             |
+| **Code Quality**  | ESLint, Prettier            |
+| **Documentation** | Swagger/OpenAPI             |
+| **Environment**   | Dotenv                      |
 
 ---
 
@@ -104,11 +104,11 @@ NODE_ENV=development
 
 **Configuration Details:**
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | 3000 | Server port |
+| Variable    | Default                         | Description               |
+| ----------- | ------------------------------- | ------------------------- |
+| `PORT`      | 3000                            | Server port               |
 | `MONGO_URI` | mongodb://localhost:27017/local | MongoDB connection string |
-| `NODE_ENV` | development | Node environment |
+| `NODE_ENV`  | development                     | Node environment          |
 
 ---
 
@@ -205,23 +205,27 @@ Add your versioning endpoints as needed following REST conventions.
 ## 📝 Development Workflow
 
 1. **Create Feature Branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
 2. **Make Changes** and test locally
+
    ```bash
    npm run dev
    npm test
    ```
 
 3. **Format & Lint**
+
    ```bash
    npm run format
    npm run lint
    ```
 
 4. **Commit Changes**
+
    ```bash
    git add .
    git commit -m "feat: describe your changes"
@@ -268,17 +272,19 @@ Contributions are welcome! Please follow these steps:
 ## 🆘 Troubleshooting
 
 ### MongoDB Connection Error
+
 - Ensure MongoDB is running locally or check your `MONGO_URI` in `.env`
 - Verify network connectivity if using MongoDB Atlas
 
 ### Port Already in Use
+
 - Change the `PORT` in `.env` to an available port
 
 ### Dependencies Installation Issues
+
 - Clear npm cache: `npm cache clean --force`
 - Delete `node_modules` and `package-lock.json`, then run `npm install` again
 
 ---
 
 **Last Updated**: February 2026
-

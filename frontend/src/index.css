@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-cream: #FDF6E3;
+  --color-dark-green: #1A3C40;
+  --color-terracotta: #E67E51;
+  --color-mustard: #E6B325;
+
+  /* Dark mode specific background */
+  --color-dark-bg: #0D1F21;
+}
+
+body {
+  @apply font-sans transition-colors duration-300;
+}
