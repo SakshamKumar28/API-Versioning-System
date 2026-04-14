@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   createUserV1,
   createUserV2,
@@ -54,7 +54,7 @@ function App() {
     }
   }, [darkMode]);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const [v1Res, v2Res, v3Res] = await Promise.all([
         getUsersV1(),
@@ -84,21 +84,11 @@ function App() {
     } catch (error) {
       console.error("Error fetching users", error);
     }
-  };
-
-  useEffect(() => {
-    fetchUsers();
   }, [selectedVersion]);
 
   useEffect(() => {
-    if (selectedVersion === 'v1') {
-      setRawResponse({ success: true, data: v1Users });
-    } else if (selectedVersion === 'v2') {
-      setRawResponse({ success: true, data: v2Users });
-    } else {
-      setRawResponse({ success: true, data: v3Users });
-    }
-  }, [selectedVersion, v1Users, v2Users, v3Users]);
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleV1Submit = async (e) => {
     e.preventDefault();
@@ -108,7 +98,7 @@ function App() {
       setRawResponse(response.data);
       fetchUsers();
       alert("V1 User Created!");
-    } catch (error) {
+    } catch {
       alert("Error creating V1 user");
     }
   };
@@ -121,7 +111,7 @@ function App() {
       setRawResponse(response.data);
       fetchUsers();
       alert("V2 User Created!");
-    } catch (error) {
+    } catch {
       alert("Error creating V2 user");
     }
   };
@@ -138,7 +128,7 @@ function App() {
       setRawResponse(response.data);
       fetchUsers();
       alert("V3 User Created!");
-    } catch (error) {
+    } catch {
       alert("Error creating V3 user");
     }
   };
