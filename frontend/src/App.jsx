@@ -36,8 +36,11 @@ function App() {
   const [v1Users, setV1Users] = useState([]);
   const [v2Users, setV2Users] = useState([]);
   const [v3Users, setV3Users] = useState([]);
+  const [rawResponses, setRawResponses] = useState({ v1: null, v2: null, v3: null });
   const [darkMode, setDarkMode] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState('v3');
+  const [rawViewVersion, setRawViewVersion] = useState('v3');
+  const [viewMode, setViewMode] = useState('split');
   const [deprecationNotice, setDeprecationNotice] = useState('');
   
   const [v1FormData, setV1FormData] = useState({ name: '', email: '' });
@@ -64,6 +67,11 @@ function App() {
       setV1Users(v1Res.data.data || []);
       setV2Users(v2Res.data.data || []);
       setV3Users(v3Res.data.data || []);
+      setRawResponses({
+        v1: v1Res.data || null,
+        v2: v2Res.data || null,
+        v3: v3Res.data || null,
+      });
 
       const selectedResponse = {
         v1: v1Res,
@@ -86,6 +94,10 @@ function App() {
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
+
+  useEffect(() => {
+    setRawViewVersion(selectedVersion);
+  }, [selectedVersion]);
 
   const handleV1Submit = async (e) => {
     e.preventDefault();
@@ -129,6 +141,7 @@ function App() {
 
   const activeUsers = selectedVersion === 'v1' ? v1Users : selectedVersion === 'v2' ? v2Users : v3Users;
   const activeMeta = VERSION_CONFIG[selectedVersion];
+  const activeRawResponse = rawResponses[rawViewVersion];
 
   return (
     <div className={`min-h-screen p-8 transition-colors duration-300 bg-cream dark:bg-dark-bg`}>
@@ -158,6 +171,31 @@ function App() {
             <option value="v2">v2</option>
             <option value="v3">v3</option>
           </select>
+        </div>
+
+        <div className="mt-6 max-w-md mx-auto text-left">
+          <div className="block text-dark-green dark:text-cream font-bold mb-2">View Mode</div>
+          <div className="grid grid-cols-3 gap-2 rounded-xl bg-dark-green/10 dark:bg-cream/10 p-2">
+            {[
+              { key: 'formatted', label: 'Formatted' },
+              { key: 'raw', label: 'Raw JSON' },
+              { key: 'split', label: 'Split' },
+            ].map((mode) => (
+              <button
+                key={mode.key}
+                type="button"
+                aria-pressed={viewMode === mode.key}
+                onClick={() => setViewMode(mode.key)}
+                className={`rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
+                  viewMode === mode.key
+                    ? 'bg-dark-green text-cream dark:bg-cream dark:text-dark-green'
+                    : 'text-dark-green dark:text-cream hover:bg-dark-green/10 dark:hover:bg-cream/10'
+                }`}
+              >
+                {mode.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {deprecationNotice && (
@@ -267,16 +305,36 @@ function App() {
             </div>
           </Card>
 
-          <Card title={`${selectedVersion.toUpperCase()} User Summary`}>
-            <div className="rounded-lg bg-dark-green/5 dark:bg-cream/5 p-4 space-y-2 text-sm">
-              <div className="text-dark-green dark:text-cream font-semibold">
-                Total records: {activeUsers.length}
-              </div>
-              <div className="text-dark-green/70 dark:text-cream/70">
-                Raw user details are hidden for all versions.
-              </div>
-            </div>
-          </Card>
+          {(viewMode === 'formatted' || viewMode === 'split') && (
+            <Card title={`${selectedVersion.toUpperCase()} Users List`}>
+              <ul className="space-y-3">
+                {activeUsers.length === 0 && <p className="text-dark-green/50 dark:text-cream/50">No users found.</p>}
+                {activeUsers.map((user) => (
+                  <li key={user._id} className="bg-white dark:bg-dark-green/30 p-4 rounded-lg shadow-sm border border-dark-green/5 dark:border-cream/5 transition-colors">
+                    {selectedVersion === 'v1' && (
+                      <>
+                        <div className="font-bold text-dark-green dark:text-cream">{user.name}</div>
+                        <div className="text-sm text-dark-green/70 dark:text-cream/70">{user.email}</div>
+                      </>
+                    )}
+                    {selectedVersion === 'v2' && (
+                      <>
+                        <div className="font-bold text-dark-green dark:text-cream">{user.firstName} {user.lastName}</div>
+                        <div className="text-sm text-dark-green/70 dark:text-cream/70">{user.email}</div>
+                      </>
+                    )}
+                    {selectedVersion === 'v3' && (
+                      <>
+                        <div className="font-bold text-dark-green dark:text-cream">{user.fullName}</div>
+                        <div className="text-sm text-dark-green/70 dark:text-cream/70">{user.email}</div>
+                        <div className="text-xs text-dark-green/70 dark:text-cream/70">Age: {user.age ?? 'N/A'} | Phone: {user.phone || 'N/A'}</div>
+                      </>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          )}
         </section>
 
         <section className="space-y-8">
@@ -306,6 +364,36 @@ function App() {
               </table>
             </div>
           </Card>
+
+          {(viewMode === 'raw' || viewMode === 'split') && (
+            <Card title="Raw JSON Responses">
+              <div className="mb-3 text-sm text-dark-green/80 dark:text-cream/80">
+                Inspect exact API payloads by version.
+              </div>
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                {['v1', 'v2', 'v3'].map((version) => (
+                  <button
+                    key={version}
+                    type="button"
+                    aria-pressed={rawViewVersion === version}
+                    onClick={() => setRawViewVersion(version)}
+                    className={`rounded-lg px-3 py-2 text-sm font-semibold uppercase transition-colors ${
+                      rawViewVersion === version
+                        ? 'bg-dark-green text-cream dark:bg-cream dark:text-dark-green'
+                        : 'bg-dark-green/10 dark:bg-cream/10 text-dark-green dark:text-cream hover:bg-dark-green/20 dark:hover:bg-cream/20'
+                    }`}
+                  >
+                    {version}
+                  </button>
+                ))}
+              </div>
+              <pre className="max-h-80 overflow-auto rounded-md bg-dark-green/90 text-cream text-xs p-3 whitespace-pre-wrap wrap-break-word">
+                {activeRawResponse
+                  ? JSON.stringify(activeRawResponse, null, 2)
+                  : 'No data loaded.'}
+              </pre>
+            </Card>
+          )}
 
         </section>
       </main>
