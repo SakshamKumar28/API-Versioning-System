@@ -8,7 +8,7 @@ import UserV2 from "../src/v2/models/User.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+dotenv.config({ path: path.resolve(__dirname, "../.env"), quiet: true });
 
 const URL = process.env.MONGO_URI || "mongodb://localhost:27017/local";
 

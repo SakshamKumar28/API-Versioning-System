@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Always load backend/.env even when command is run from workspace root.
-dotenv.config({ path: path.join(__dirname, ".env") });
+dotenv.config({ path: path.join(__dirname, ".env"), quiet: true });
 
 async function startServer() {
   const PORT = process.env.PORT || 3000;

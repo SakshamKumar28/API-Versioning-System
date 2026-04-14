@@ -46,8 +46,30 @@ export const createUser = async (req, res) => {
 
 export const getUsers = async (req, res) => {
   try {
-    const users = await User.find();
-    res.status(200).json({ success: true, data: users });
+    const includeLegacy =
+      String(req.query.includeLegacy || "false").toLowerCase() === "true";
+
+    const query = includeLegacy ? {} : { sourceVersion: "v3" };
+    const users = await User.find(query).sort({ createdAt: -1 });
+
+    // Ensure the v3 endpoint always returns a stable v3 response shape.
+    const data = users.map((user) => {
+      const fullName =
+        user.fullName || `${user.firstName || ""} ${user.lastName || ""}`.trim();
+
+      return {
+        _id: user._id,
+        fullName,
+        email: user.email,
+        age: user.age ?? null,
+        phone: user.phone || "",
+        sourceVersion: user.sourceVersion,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      };
+    });
+
+    res.status(200).json({ success: true, data });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
